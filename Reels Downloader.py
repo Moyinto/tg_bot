@@ -1,31 +1,35 @@
 import instaloader
-import pyktok as pyk
 import yt_dlp
 
 # Function to download Instagram reels.          
-def quireel(reel_url):
+def reels(link):
 
     # To create an instance of the IG API.
     ig_api = instaloader.Instaloader()
 
     # This gets the video's unique identifier.
-    shortcode = reel_url.split("/")[-2]
+    shortcode = link.split("/")[-2]
 
     # This is for downloading the reel.
     post = instaloader.Post.from_shortcode(ig_api.context, shortcode)
-    ig_api.download_post(post, target="Quireels")
+    ig_api.download_post(post, target="Reels")
 
 # Function to download TikTok videos.
-def tikitokos(tiktok_url):
+def tiktoks(link):
 
-    # To specify the browser that Pyktok will use.
-    pyk.specify_browser("chrome")
+    # Set the options for downloading the best quality video.
+    ydl_opts = {
+    'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+    'outtmpl': r'C:\Users\johan\TG_BOT\TikToks\%(title)s.%(ext)s',
+    'merge_output_format': 'mp4'
+    }
 
-    # To download the TikTok
-    pyk.save_tiktok(tiktok_url, True, "data.csv")
+    # To download the video.
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([link])
 
 # Function to download Youtube videos.
-def yt_videos(yt_url):
+def yt_videos(link):
 
     # Set the options for downloading the best quality video.
     ydl_opts = {
@@ -37,20 +41,32 @@ def yt_videos(yt_url):
 
     # To download the video.
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([yt_url])
+        ydl.download([link])
+
+def general_videos(link):
     
-# Menu to specify what the script will download.
-select = int(input("Instagram (1), TikTok (2), Youtube (3): "))
+    # Set the options for downloading the best quality video.
+    ydl_opts = {
 
-if select == 1:
-    reel_url = str(input("Link: "))
-    quireel(reel_url)
+        'format': 'bestvideo[height<=1980]+bestaudio/best[height<=1080]',
+        'outtmpl': r'C:\Users\johan\tg_bot\General Videos\%(title)s.%(ext)s',
+        'merge_output_format': 'mp4',
+    }
 
-elif select == 2:
-    tiktok_url = str(input("Link: " ))
-    tikitokos(tiktok_url)
-elif select == 3:
-    yt_url = str(input("Link: " ))
-    yt_videos(yt_url)
+    # To download the video.
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([link])
+
+# Menu to enter a link.
+link = str(input("Introduzca el link del video que desea descargar: "))
+
+if  link.find("instagram") == 12:
+    reels(link)
+
+elif link.find("tiktok") == 12:
+    tiktoks(link)
+
+elif link.find("youtube") == 12:
+    yt_videos(link)
 else:
-    print("Wtf que pasó")
+    general_videos(link)
